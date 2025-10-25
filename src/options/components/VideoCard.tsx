@@ -1,23 +1,26 @@
 import { useState } from 'react';
 import { VideoTranscript, Caption } from '@/types/VideoTranscript';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
-import { Video, Clock, ExternalLink, Play, List, Trash2 } from 'lucide-react';
+import { Clock, Play, ChevronDown, ChevronRight, Trash2 } from 'lucide-react';
 import { useDeleteTranscript } from '@/hooks/mutations/useDeleteTranscript';
 import { openVideoAtTime } from '@/lib/videoUtils';
 import { formatTime, formatDate } from '@/lib/formatUtils';
 import { highlightText } from '@/lib/textUtils';
+import { useAtom } from 'jotai';
+import { activeSearchQueryAtom } from '@/lib/atoms';
+import { CopyButton } from './CopyButton';
 
 interface VideoCardProps {
   transcript: VideoTranscript;
-  searchQuery?: string;
-  matchingCaptions?: Caption[];
+  matchingCaptions: Caption[];
 }
 
-export const VideoCard = ({ transcript, searchQuery, matchingCaptions }: VideoCardProps) => {
+export const VideoCard = ({ transcript, matchingCaptions }: VideoCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeSearchQuery] = useAtom(activeSearchQueryAtom);
+
   const deleteMutation = useDeleteTranscript();
 
   const handleDelete = () => {
@@ -26,43 +29,32 @@ export const VideoCard = ({ transcript, searchQuery, matchingCaptions }: VideoCa
     }
   };
 
-  const captionsToDisplay = isOpen
-    ? transcript.captions
-    : (matchingCaptions && matchingCaptions.length > 0 ? matchingCaptions : []);
+  const captionsToDisplay = !!matchingCaptions.length ? matchingCaptions : transcript.captions;
+  const fullTranscriptText = captionsToDisplay.map(caption => caption.text).join(' ');
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardHeader>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg flex items-center gap-2 mb-1 overflow-hidden">
-              <Video className="h-4 w-4 shrink-0" />
-              <span className="truncate">{transcript.title}</span>
-            </CardTitle>
+    <Card>
+      <CardHeader className='flex flex-col gap-2'>
+        <CardTitle className="text-lg flex gap-2 overflow-hidden w-full items-center">
+          <Toggle
+            pressed={isOpen}
+            onPressedChange={setIsOpen}
+            aria-label="Toggle transcript"
+            size="sm"
+            variant="outline"
+            className="shrink-0 h-8 w-8 p-0"
+          >
+            {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </Toggle>
 
-            <CardDescription className="flex items-center gap-2 flex-wrap">
-              {!!transcript.videoDuration && (
-                <>
-                  <Clock className="h-3 w-3" />
-                  <span>Duration: {formatTime(transcript.videoDuration)}</span>
-                </>
-              )}
+          <span className="truncate flex-1">{transcript.title}</span>
 
-              {!!transcript.watchedAt && (
-                <>
-                  {transcript.videoDuration !== undefined && <span>•</span>}
-                  <span>Last watch: {formatDate(transcript.watchedAt)}</span>
-                </>
-              )}
-            </CardDescription>
-          </div>
           <div className="flex gap-2 shrink-0">
             <Button
               onClick={() => openVideoAtTime(transcript.videoId)}
               variant="default"
             >
-              <Play className="h-4 w-4 mr-2" />
-              Open Video
+              <Play className="h-4 w-4" />
             </Button>
 
             <Button
@@ -73,52 +65,47 @@ export const VideoCard = ({ transcript, searchQuery, matchingCaptions }: VideoCa
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
-        </div>
+        </CardTitle>
+
+        <CardDescription className="flex items-center gap-2 flex-wrap">
+          {!!transcript.videoDuration && (
+            <>
+              <Clock className="h-3 w-3" />
+              <span>Duration: {formatTime(transcript.videoDuration)}</span>
+            </>
+          )}
+
+          {!!transcript.watchedAt && (
+            <>
+              {transcript.videoDuration !== undefined && <span>•</span>}
+              <span>Last watch: {formatDate(transcript.watchedAt)}</span>
+            </>
+          )}
+        </CardDescription>
       </CardHeader>
 
       <CardContent>
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium">
-              {!isOpen && `Matches: ${matchingCaptions?.length}`}
-            </p>
-
-            <Toggle
-              pressed={isOpen}
-              onPressedChange={setIsOpen}
-              aria-label="Toggle all transcripts"
-              size="sm"
-              variant="outline"
-            >
-              <List className="h-4 w-4 mr-1" />
-              {isOpen ? 'Hide' : 'Show'}
-            </Toggle>
-          </div>
-
-          {!!captionsToDisplay.length && (
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {captionsToDisplay.map((caption, index) => (
-                <div key={index} className="flex items-start gap-2 p-2 rounded-md bg-muted/50">
-                  <div className="flex-1">
-                    <p className="text-sm">
-                      {searchQuery ? highlightText(caption.text, searchQuery) : caption.text}
-                    </p>
-
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {formatTime(caption.start)}
-                    </p>
-                  </div>
-
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => openVideoAtTime(transcript.videoId, caption.start)}
-                    className="shrink-0"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
+          {isOpen && (
+            <div className="relative">
+              <CopyButton
+                text={fullTranscriptText}
+                className="absolute top-2 right-2 z-10"
+              />
+              <div className="max-h-96 overflow-y-auto p-3 rounded-md bg-muted/30">
+                <p className="text-sm leading-relaxed pr-12">
+                  {captionsToDisplay.map((caption, index) => (
+                    <span
+                      key={index}
+                      onClick={() => openVideoAtTime(transcript.videoId, caption.start)}
+                      className="cursor-pointer hover:bg-primary/20 hover:text-primary transition-colors rounded px-0.5"
+                    >
+                      {activeSearchQuery ? highlightText(caption.text, activeSearchQuery) : caption.text}
+                      {index < captionsToDisplay.length - 1 ? ' ' : ''}
+                    </span>
+                  ))}
+                </p>
+              </div>
             </div>
           )}
         </div>

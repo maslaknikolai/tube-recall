@@ -82,7 +82,6 @@ export const Main = () => {
             <VideoCard
               key={transcript.videoId}
               transcript={transcript}
-              searchQuery={activeSearchQuery}
               matchingCaptions={matchingCaptions}
             />
           ))
