@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
 import { TimedTextResponse } from "./types/TimedTextResponse";
 import { Caption, VideoTranscript } from "./types/VideoTranscript";
-import { KVDB } from "./lib/kvdb";
+import { setTranscript, getTranscript } from "./lib/transcriptsStore";
 
 injectFetchRewrite()
 listenForSubtitles()
@@ -35,7 +35,7 @@ function listenForSubtitles() {
         })()
 
         if (!parsedBody) {
-            console.warn('Cannot parse timedtext response', data.body);
+            console.warn('TubeRecall: Cannot parse timedtext response', data.body);
             return
         }
 
@@ -57,23 +57,25 @@ function listenForSubtitles() {
                 return acc;
             }, []);
 
+            const videoElement = document.querySelector('video.html5-main-video') as HTMLVideoElement;
+
             const videoTranscript: VideoTranscript = {
                 videoId: (() => {
                     const urlParams = new URLSearchParams(data.url.split('?')[1]);
                     return urlParams.get('v') || 'unknown';
                 })(),
                 title: document.title,
-                captions
+                captions,
+                videoDuration: videoElement ? Math.floor(videoElement.duration) : undefined,
+                watchedAt: Date.now()
             };
 
-            const videosDB = new KVDB('videos');
+            await setTranscript(videoTranscript);
 
-            videosDB.set(videoTranscript.videoId, videoTranscript);
-
-            const video = await videosDB.get(videoTranscript.videoId);
-            console.log('WIPWIP', video);
+            const video = await getTranscript(videoTranscript.videoId);
+            console.log('TubeRecall: saved subtitles', video);
         } catch (e) {
-            console.warn('Failed to extract captions', e);
+            console.warn('TubeRecall: Failed to extract captions', e);
         }
 
     })
