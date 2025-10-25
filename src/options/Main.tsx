@@ -1,9 +1,10 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
+import { useAtom } from 'jotai';
 import { useTranscripts } from '@/hooks/queries/useTranscripts';
 import { VideoTranscript, Caption } from '@/types/VideoTranscript';
-import { Card, CardContent } from '@/components/ui/card';
 import { SearchBar } from './components/SearchBar';
 import { VideoCard } from './components/VideoCard';
+import { activeSearchQueryAtom } from '@/lib/atoms';
 
 interface VideoWithMatches {
   transcript: VideoTranscript;
@@ -13,12 +14,7 @@ interface VideoWithMatches {
 export const Main = () => {
   const { data: transcripts = [], isLoading } = useTranscripts();
 
-  const [searchInput, setSearchInput] = useState('');
-  const [activeSearchQuery, setActiveSearchQuery] = useState('');
-
-  const handleSearch = useCallback(() => {
-    setActiveSearchQuery(searchInput.trim());
-  }, [searchInput]);
+  const [activeSearchQuery] = useAtom(activeSearchQueryAtom);
 
   const videosToDisplay = useMemo((): VideoWithMatches[] => {
     if (!activeSearchQuery) {
@@ -66,12 +62,8 @@ export const Main = () => {
         </p>
       </div>
 
-      <div className="mb-6">
-        <SearchBar
-          value={searchInput}
-          onChange={setSearchInput}
-          onSearch={handleSearch}
-        />
+      <div className="pb-6">
+        <SearchBar />
       </div>
 
       {activeSearchQuery && (

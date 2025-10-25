@@ -1,18 +1,15 @@
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAtom } from 'jotai';
+import { searchInputAtom, activeSearchQueryAtom } from '@/lib/atoms';
 
-interface SearchBarProps {
-  value: string;
-  onChange: (value: string) => void;
-  onSearch: () => void;
-}
+export const SearchBar = () => {
+  const [searchInput, setSearchInput] = useAtom(searchInputAtom);
+  const [, setActiveSearchQuery] = useAtom(activeSearchQueryAtom);
 
-export const SearchBar = ({ value, onChange, onSearch }: SearchBarProps) => {
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      onSearch();
-    }
+  const handleSearch = () => {
+    setActiveSearchQuery(searchInput.trim());
   };
 
   return (
@@ -22,13 +19,17 @@ export const SearchBar = ({ value, onChange, onSearch }: SearchBarProps) => {
         <Input
           type="text"
           placeholder="Search captions..."
-          value={value}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
-          onKeyDown={handleKeyDown}
+          value={searchInput}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
+          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+              handleSearch();
+            }
+          }}
           className="pl-10"
         />
       </div>
-      <Button onClick={onSearch}>
+      <Button onClick={handleSearch}>
         <Search className="h-4 w-4 mr-2" />
         Search
       </Button>
