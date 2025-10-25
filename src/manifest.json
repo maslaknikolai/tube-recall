@@ -9,14 +9,18 @@
     "128": "icon/128.png"
   },
   "{{chrome}}.action": {
-    "default_popup": "src/popup.html"
+      "default_title": "TubeRecall"
   },
   "{{firefox}}.browser_action": {
-    "default_popup": "src/popup.html"
+      "default_title": "TubeRecall"
   },
   "background": {
     "{{chrome}}.service_worker": "src/background.ts",
     "{{firefox}}.scripts": ["src/background.ts"]
+  },
+  "options_ui": {
+    "page": "src/options.html",
+    "open_in_tab": true
   },
   "content_scripts": [
     {
