@@ -4,6 +4,7 @@ import { useTranscripts } from '@/hooks/queries/useTranscripts';
 import { VideoTranscript, Caption } from '@/types/VideoTranscript';
 import { SearchBar } from './components/SearchBar';
 import { VideoCard } from './components/VideoCard';
+import { DownloadAllButton } from './components/DownloadAllButton';
 import { Button } from '@/components/ui/button';
 import { activeSearchQueryAtom, openedVideoIdsAtom } from '@/lib/atoms';
 
@@ -18,7 +19,7 @@ export const Main = () => {
   const [activeSearchQuery] = useAtom(activeSearchQueryAtom);
   const [openedVideoIds, setOpenedVideoIds] = useAtom(openedVideoIdsAtom);
 
-  const sortedFound = useMemo(() => {
+  const sorted = useMemo(() => {
     const sorted = [...transcripts];
 
     if (sortType === 'date') {
@@ -53,14 +54,14 @@ export const Main = () => {
     if (isAllOpened) {
       setOpenedVideoIds(new Set());
     } else {
-      const allVideoIds = new Set(sortedFound.map(it => it.videoId));
+      const allVideoIds = new Set(sorted.map(it => it.videoId));
       setOpenedVideoIds(allVideoIds);
     }
   };
 
   const isAllOpened = useMemo(() => {
-    return sortedFound.length > 0 && sortedFound.every(it => openedVideoIds.has(it.videoId))
-  }, [sortedFound, openedVideoIds]);
+    return sorted.length > 0 && sorted.every(it => openedVideoIds.has(it.videoId))
+  }, [sorted, openedVideoIds]);
 
   if (isLoading) {
     return (
@@ -98,12 +99,13 @@ export const Main = () => {
           Duration {sortType === 'duration' && (sortDirection === 'asc' ? '↑' : '↓')}
         </Button>
 
-        <div className="ml-auto">
+        <div className="ml-auto flex gap-2">
+          <DownloadAllButton transcripts={sorted} />
           <Button
             variant="outline"
             size="sm"
             onClick={toggleIsAllOpened}
-            disabled={sortedFound.length === 0}
+            disabled={sorted.length === 0}
           >
             {isAllOpened ? 'Close All' : 'Open All'}
           </Button>
@@ -113,8 +115,8 @@ export const Main = () => {
       {activeSearchQuery && (
         <div className="mb-4">
           <p className="text-sm text-muted-foreground">
-            {sortedFound.length > 0
-              ? `Found ${sortedFound.length} video${sortedFound.length !== 1 ? 's' : ''} with matching captions`
+            {sorted.length > 0
+              ? `Found ${sorted.length} video${sorted.length !== 1 ? 's' : ''} with matching captions`
               : `No results found for "${activeSearchQuery}"`
             }
           </p>
@@ -122,7 +124,7 @@ export const Main = () => {
       )}
 
       <div className="space-y-4">
-        {sortedFound.map((transcript) => (
+        {sorted.map((transcript) => (
             <VideoCard
               key={transcript.videoId}
               transcript={transcript}
