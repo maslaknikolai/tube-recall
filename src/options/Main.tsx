@@ -2,11 +2,10 @@ import { useMemo, useState } from 'react';
 import { useAtom } from 'jotai';
 import { useTranscripts } from '@/hooks/queries/useTranscripts';
 import { VideoTranscript, Caption } from '@/types/VideoTranscript';
-import { SearchBar } from './components/SearchBar';
 import { VideoCard } from './components/VideoCard';
 import { DownloadAllButton } from './components/DownloadAllButton';
 import { Button } from '@/components/ui/button';
-import { activeSearchQueryAtom, openedVideoIdsAtom } from '@/lib/atoms';
+import { openedVideoIdsAtom } from '@/lib/atoms';
 
 type SortType = 'date' | 'duration';
 type SortDirection = 'asc' | 'desc';
@@ -16,7 +15,6 @@ export const Main = () => {
   const [sortType, setSortType] = useState<SortType>('date');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
-  const [activeSearchQuery] = useAtom(activeSearchQueryAtom);
   const [openedVideoIds, setOpenedVideoIds] = useAtom(openedVideoIdsAtom);
 
   const sorted = useMemo(() => {
@@ -84,6 +82,7 @@ export const Main = () => {
 
       <div className="mb-6 flex items-center gap-2 flex-wrap">
         <span className="text-sm text-muted-foreground">Sort by:</span>
+
         <Button
           variant={sortType === 'date' ? 'default' : 'outline'}
           size="sm"
@@ -91,6 +90,7 @@ export const Main = () => {
         >
           Date {sortType === 'date' && (sortDirection === 'asc' ? '↑' : '↓')}
         </Button>
+
         <Button
           variant={sortType === 'duration' ? 'default' : 'outline'}
           size="sm"
@@ -101,6 +101,7 @@ export const Main = () => {
 
         <div className="ml-auto flex gap-2">
           <DownloadAllButton transcripts={sorted} />
+
           <Button
             variant="outline"
             size="sm"
@@ -112,26 +113,20 @@ export const Main = () => {
         </div>
       </div>
 
-      {activeSearchQuery && (
-        <div className="mb-4">
-          <p className="text-sm text-muted-foreground">
-            {sorted.length > 0
-              ? `Found ${sorted.length} video${sorted.length !== 1 ? 's' : ''} with matching captions`
-              : `No results found for "${activeSearchQuery}"`
-            }
-          </p>
+      {!sorted.length ? (
+        <div className='flex items-center justify-center p-4 text-sm'>
+          No trancripts yet. Transcripts will appear here after watching videos on YouTube with captions enabled.
         </div>
-      )}
-
-      <div className="space-y-4">
-        {sorted.map((transcript) => (
+      ): (
+        <div className="flex flex-col gap-4">
+          {sorted.map((transcript) => (
             <VideoCard
               key={transcript.videoId}
               transcript={transcript}
             />
-          ))
-        }
+          ))}
       </div>
+      )}
     </div>
   );
 };

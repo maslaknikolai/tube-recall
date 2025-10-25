@@ -6,9 +6,8 @@ import { Clock, Play, ChevronDown, ChevronRight, Trash2 } from 'lucide-react';
 import { useDeleteTranscript } from '@/hooks/mutations/useDeleteTranscript';
 import { openVideoAtTime } from '@/lib/videoUtils';
 import { formatTime, formatDate } from '@/lib/formatUtils';
-import { highlightText } from '@/lib/textUtils';
 import { useAtom } from 'jotai';
-import { activeSearchQueryAtom, openedVideoIdsAtom } from '@/lib/atoms';
+import { openedVideoIdsAtom } from '@/lib/atoms';
 import { CopyButton } from './CopyButton';
 
 interface VideoCardProps {
@@ -17,7 +16,6 @@ interface VideoCardProps {
 
 export const VideoCard = ({ transcript }: VideoCardProps) => {
   const [openedVideoIds, setOpenedVideoIds] = useAtom(openedVideoIdsAtom);
-  const [activeSearchQuery] = useAtom(activeSearchQueryAtom);
 
   const isOpen = openedVideoIds.has(transcript.videoId);
 
@@ -108,7 +106,7 @@ export const VideoCard = ({ transcript }: VideoCardProps) => {
                     onClick={() => openVideoAtTime(transcript.videoId, caption.start)}
                     className="cursor-pointer hover:bg-primary/20 hover:text-primary transition-colors rounded px-0.5"
                   >
-                    {activeSearchQuery ? highlightText(caption.text, activeSearchQuery) : caption.text}
+                    {caption.text}
                     {index < transcript.captions.length - 1 ? ' ' : ''}
                   </span>
                 ))}
