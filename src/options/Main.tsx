@@ -5,7 +5,7 @@ import { VideoTranscript, Caption } from '@/types/VideoTranscript';
 import { SearchBar } from './components/SearchBar';
 import { VideoCard } from './components/VideoCard';
 import { Button } from '@/components/ui/button';
-import { activeSearchQueryAtom } from '@/lib/atoms';
+import { activeSearchQueryAtom, openedVideoIdsAtom } from '@/lib/atoms';
 
 interface VideoWithMatches {
   transcript: VideoTranscript;
@@ -21,6 +21,7 @@ export const Main = () => {
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   const [activeSearchQuery] = useAtom(activeSearchQueryAtom);
+  const [openedVideoIds, setOpenedVideoIds] = useAtom(openedVideoIdsAtom);
 
   const found = useMemo((): VideoWithMatches[] => {
     if (!activeSearchQuery) {
@@ -80,6 +81,22 @@ export const Main = () => {
     }
   };
 
+  const toggleIsAllOpened = () => {
+    if (isAllOpened) {
+      setOpenedVideoIds(new Set());
+    } else {
+      const allVideoIds = new Set(sortedFound.map(({ transcript }) => transcript.videoId));
+      setOpenedVideoIds(allVideoIds);
+    }
+  };
+
+  const handleCloseAll = () => {
+  };
+
+  const isAllOpened = useMemo(() => {
+    return sortedFound.length > 0 && sortedFound.every(({ transcript }) => openedVideoIds.has(transcript.videoId))
+  }, [sortedFound, openedVideoIds]);
+
   if (isLoading) {
     return (
       <div className="container mx-auto p-6">
@@ -99,7 +116,7 @@ export const Main = () => {
         </p>
       </div>
 
-      <div className="mb-6 flex items-center gap-2">
+      <div className="mb-6 flex items-center gap-2 flex-wrap">
         <span className="text-sm text-muted-foreground">Sort by:</span>
         <Button
           variant={sortType === 'date' ? 'default' : 'outline'}
@@ -115,6 +132,17 @@ export const Main = () => {
         >
           Duration {sortType === 'duration' && (sortDirection === 'asc' ? '↑' : '↓')}
         </Button>
+
+        <div className="ml-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleIsAllOpened}
+            disabled={sortedFound.length === 0}
+          >
+            {isAllOpened ? 'Close All' : 'Open All'}
+          </Button>
+        </div>
       </div>
 
       <div className="pb-6">

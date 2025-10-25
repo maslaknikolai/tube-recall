@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { VideoTranscript, Caption } from '@/types/VideoTranscript';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,7 @@ import { openVideoAtTime } from '@/lib/videoUtils';
 import { formatTime, formatDate } from '@/lib/formatUtils';
 import { highlightText } from '@/lib/textUtils';
 import { useAtom } from 'jotai';
-import { activeSearchQueryAtom } from '@/lib/atoms';
+import { activeSearchQueryAtom, openedVideoIdsAtom } from '@/lib/atoms';
 import { CopyButton } from './CopyButton';
 
 interface VideoCardProps {
@@ -18,8 +17,22 @@ interface VideoCardProps {
 }
 
 export const VideoCard = ({ transcript, matchingCaptions }: VideoCardProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [openedVideoIds, setOpenedVideoIds] = useAtom(openedVideoIdsAtom);
   const [activeSearchQuery] = useAtom(activeSearchQueryAtom);
+
+  const isOpen = openedVideoIds.has(transcript.videoId);
+
+  const handleToggle = (pressed: boolean) => {
+    setOpenedVideoIds(prev => {
+      const newSet = new Set(prev);
+      if (pressed) {
+        newSet.add(transcript.videoId);
+      } else {
+        newSet.delete(transcript.videoId);
+      }
+      return newSet;
+    });
+  };
 
   const deleteMutation = useDeleteTranscript();
 
@@ -38,7 +51,7 @@ export const VideoCard = ({ transcript, matchingCaptions }: VideoCardProps) => {
         <CardTitle className="text-lg flex gap-2 overflow-hidden w-full items-center">
           <Toggle
             pressed={isOpen}
-            onPressedChange={setIsOpen}
+            onPressedChange={handleToggle}
             aria-label="Toggle transcript"
             size="sm"
             variant="outline"
@@ -90,7 +103,7 @@ export const VideoCard = ({ transcript, matchingCaptions }: VideoCardProps) => {
             <div className="relative">
               <CopyButton
                 text={fullTranscriptText}
-                className="absolute top-2 right-2 z-10"
+                className="absolute top-2 right-6 z-10"
               />
               <div className="max-h-96 overflow-y-auto p-3 rounded-md bg-muted/30">
                 <p className="text-sm leading-relaxed pr-12">
