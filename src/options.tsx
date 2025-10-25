@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {Options} from "./options/Options";
+import {App} from "./options/App";
 
 ReactDOM.createRoot(document.body).render(
   <React.StrictMode>
-    <Options />
+    <App />
   </React.StrictMode>
 );

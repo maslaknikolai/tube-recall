@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { getAllTranscripts } from '@/lib/transcriptsStore';
+import { useState, useMemo, useCallback } from 'react';
+import { useTranscripts } from '@/hooks/queries/useTranscripts';
 import { VideoTranscript, Caption } from '@/types/VideoTranscript';
 import { Card, CardContent } from '@/components/ui/card';
 import { SearchBar } from './components/SearchBar';
@@ -10,26 +10,11 @@ interface VideoWithMatches {
   matchingCaptions: Caption[];
 }
 
-export const Options = () => {
-  const [transcripts, setTranscripts] = useState<VideoTranscript[]>([]);
+export const Main = () => {
+  const { data: transcripts = [], isLoading } = useTranscripts();
+
   const [searchInput, setSearchInput] = useState('');
   const [activeSearchQuery, setActiveSearchQuery] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadTranscripts = async () => {
-      try {
-        const loadedTranscripts = await getAllTranscripts();
-        console.log('TubeRecall: Loading transcripts', loadedTranscripts);
-        setTranscripts(loadedTranscripts);
-      } catch (error) {
-        console.error('Failed to load transcripts:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadTranscripts();
-  }, []);
 
   const handleSearch = useCallback(() => {
     setActiveSearchQuery(searchInput.trim());
@@ -62,7 +47,7 @@ export const Options = () => {
     return videosWithMatches;
   }, [transcripts, activeSearchQuery]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-center h-64">
