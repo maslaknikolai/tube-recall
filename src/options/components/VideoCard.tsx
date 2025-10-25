@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
-import { Video, Clock, ExternalLink, Play, List } from 'lucide-react';
+import { Video, Clock, ExternalLink, Play, List, Trash2 } from 'lucide-react';
+import { useDeleteTranscript } from '@/hooks/mutations/useDeleteTranscript';
 
 interface VideoCardProps {
   transcript: VideoTranscript;
@@ -53,11 +54,17 @@ const highlightText = (text: string, query: string) => {
 };
 
 export const VideoCard = ({ transcript, searchQuery, matchingCaptions }: VideoCardProps) => {
-  const [showAllTranscripts, setShowAllTranscripts] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const deleteMutation = useDeleteTranscript();
 
-  // Determine which captions to display
-  const captionsToDisplay = showAllTranscripts 
-    ? transcript.captions 
+  const handleDelete = () => {
+    if (window.confirm(`Are you sure you want to delete the transcript for "${transcript.title}"?`)) {
+      deleteMutation.mutate(transcript.videoId);
+    }
+  };
+
+  const captionsToDisplay = isOpen
+    ? transcript.captions
     : (matchingCaptions && matchingCaptions.length > 0 ? matchingCaptions : []);
 
   return (
@@ -69,53 +76,62 @@ export const VideoCard = ({ transcript, searchQuery, matchingCaptions }: VideoCa
               <Video className="h-4 w-4 shrink-0" />
               <span className="truncate">{transcript.title}</span>
             </CardTitle>
+
             <CardDescription className="flex items-center gap-2 flex-wrap">
-              {transcript.videoDuration !== undefined && (
+              {!!transcript.videoDuration && (
                 <>
                   <Clock className="h-3 w-3" />
                   <span>Duration: {formatTime(transcript.videoDuration)}</span>
                 </>
               )}
-              {transcript.watchedAt !== undefined && (
+
+              {!!transcript.watchedAt && (
                 <>
                   {transcript.videoDuration !== undefined && <span>•</span>}
                   <span>Watched: {formatDate(transcript.watchedAt)}</span>
                 </>
               )}
+
               <Badge variant="outline" className="ml-2">
                 {transcript.videoId}
               </Badge>
             </CardDescription>
           </div>
-          <Button
-            onClick={() => openVideoAtTime(transcript.videoId)}
-            className="shrink-0"
-          >
-            <Play className="h-4 w-4 mr-2" />
-            Open Video
-          </Button>
+          <div className="flex gap-2 shrink-0">
+            <Button
+              onClick={() => openVideoAtTime(transcript.videoId)}
+              variant="default"
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Open Video
+            </Button>
+            <Button
+              onClick={handleDelete}
+              variant="destructive"
+              disabled={deleteMutation.isPending}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
+
       <CardContent>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium">
-              {showAllTranscripts 
-                ? `All ${transcript.captions.length} caption${transcript.captions.length !== 1 ? 's' : ''}`
-                : matchingCaptions && matchingCaptions.length > 0
-                  ? `${matchingCaptions.length} matching caption${matchingCaptions.length !== 1 ? 's' : ''}`
-                  : `${transcript.captions.length} caption${transcript.captions.length !== 1 ? 's' : ''} available`
-              }
+              {!isOpen && `Matches: ${matchingCaptions?.length}`}
             </p>
+
             <Toggle
-              pressed={showAllTranscripts}
-              onPressedChange={setShowAllTranscripts}
+              pressed={isOpen}
+              onPressedChange={setIsOpen}
               aria-label="Toggle all transcripts"
               size="sm"
               variant="outline"
             >
               <List className="h-4 w-4 mr-1" />
-              {showAllTranscripts ? 'Hide All' : 'Show All'}
+              {isOpen ? 'Hide' : 'Show'}
             </Toggle>
           </div>
 
