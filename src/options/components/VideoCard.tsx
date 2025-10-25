@@ -92,33 +92,31 @@ export const VideoCard = ({ transcript }: VideoCardProps) => {
         </CardDescription>
       </CardHeader>
 
-      <CardContent>
-        <div className="space-y-3">
-          {isOpen && (
-            <div className="relative">
-              <CopyButton
-                transcript={transcript}
-                className="absolute top-2 right-6 z-10"
-              />
+      {isOpen && (
+        <CardContent>
+          <div className="relative">
+            <CopyButton
+              transcript={transcript}
+              className="absolute top-2 right-6 z-10"
+            />
 
-              <div className="max-h-96 overflow-y-auto p-3 rounded-md bg-muted/30">
-                <p className="text-sm leading-relaxed pr-12">
-                  {transcript.captions.map((caption, index) => (
-                    <span
-                      key={index}
-                      onClick={() => openVideoAtTime(transcript.videoId, caption.start)}
-                      className="cursor-pointer hover:bg-primary/20 hover:text-primary transition-colors rounded px-0.5"
-                    >
-                      {activeSearchQuery ? highlightText(caption.text, activeSearchQuery) : caption.text}
-                      {index < transcript.captions.length - 1 ? ' ' : ''}
-                    </span>
-                  ))}
-                </p>
-              </div>
+            <div className="max-h-96 overflow-y-auto p-3 rounded-md bg-muted/30">
+              <p className="text-sm leading-relaxed pr-12">
+                {transcript.captions.map((caption, index) => (
+                  <span
+                    key={index}
+                    onClick={() => openVideoAtTime(transcript.videoId, caption.start)}
+                    className="cursor-pointer hover:bg-primary/20 hover:text-primary transition-colors rounded px-0.5"
+                  >
+                    {activeSearchQuery ? highlightText(caption.text, activeSearchQuery) : caption.text}
+                    {index < transcript.captions.length - 1 ? ' ' : ''}
+                  </span>
+                ))}
+              </p>
             </div>
-          )}
-        </div>
-      </CardContent>
+          </div>
+        </CardContent>
+      )}
     </Card>
   );
 };
