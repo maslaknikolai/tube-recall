@@ -17,5 +17,22 @@
   "background": {
     "{{chrome}}.service_worker": "src/background.ts",
     "{{firefox}}.scripts": ["src/background.ts"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.youtube.com/*"],
+      "js": ["src/content.ts"],
+      "run_at": "document_start"
+    }
+  ],
+  "permissions": ["webRequest", "scripting"],
+  "host_permissions": ["https://*.youtube.com/*"],
+  "web_accessible_resources": [
+  {
+    "matches": ["https://*.youtube.com/*"],
+    "resources": [
+      "rewrite-fetch.js"
+    ]
   }
+]
 }
