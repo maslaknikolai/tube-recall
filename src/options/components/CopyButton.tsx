@@ -2,17 +2,19 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Copy, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { VideoTranscript } from '@/types/VideoTranscript';
 
 interface CopyButtonProps {
-  text: string;
+  transcript: VideoTranscript;
   className?: string;
 }
 
-export const CopyButton = ({ text, className }: CopyButtonProps) => {
+export const CopyButton = ({ transcript, className }: CopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = async () => {
     try {
+      const text = transcript.captions.map(caption => caption.text).join(' ');
       await navigator.clipboard.writeText(text);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);

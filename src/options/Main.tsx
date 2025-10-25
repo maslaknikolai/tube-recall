@@ -7,11 +7,6 @@ import { VideoCard } from './components/VideoCard';
 import { Button } from '@/components/ui/button';
 import { activeSearchQueryAtom, openedVideoIdsAtom } from '@/lib/atoms';
 
-interface VideoWithMatches {
-  transcript: VideoTranscript;
-  matchingCaptions: Caption[];
-}
-
 type SortType = 'date' | 'duration';
 type SortDirection = 'asc' | 'desc';
 
@@ -23,54 +18,27 @@ export const Main = () => {
   const [activeSearchQuery] = useAtom(activeSearchQueryAtom);
   const [openedVideoIds, setOpenedVideoIds] = useAtom(openedVideoIdsAtom);
 
-  const found = useMemo((): VideoWithMatches[] => {
-    if (!activeSearchQuery) {
-      return transcripts.map(transcript => ({
-        transcript,
-        matchingCaptions: []
-      }));
-    }
-
-    const query = activeSearchQuery.toLowerCase();
-    const videosWithMatches: VideoWithMatches[] = [];
-
-    for (const transcript of transcripts) {
-      const matchingCaptions = transcript.captions.filter(caption =>
-        caption.text.toLowerCase().includes(query)
-      );
-
-      if (matchingCaptions.length > 0) {
-        videosWithMatches.push({
-          transcript,
-          matchingCaptions
-        });
-      }
-    }
-
-    return videosWithMatches;
-  }, [transcripts, activeSearchQuery]);
-
-  const sortedFound = useMemo((): VideoWithMatches[] => {
-    const sorted = [...found];
+  const sortedFound = useMemo(() => {
+    const sorted = [...transcripts];
 
     if (sortType === 'date') {
       sorted.sort((a, b) => {
-        const dateA = a.transcript.watchedAt ?? 0;
-        const dateB = b.transcript.watchedAt ?? 0;
+        const dateA = a.watchedAt ?? 0;
+        const dateB = b.watchedAt ?? 0;
         const diff = dateB - dateA;
         return sortDirection === 'asc' ? -diff : diff;
       });
     } else if (sortType === 'duration') {
       sorted.sort((a, b) => {
-        const durationA = a.transcript.videoDuration ?? 0;
-        const durationB = b.transcript.videoDuration ?? 0;
+        const durationA = a.videoDuration ?? 0;
+        const durationB = b.videoDuration ?? 0;
         const diff = durationA - durationB;
         return sortDirection === 'asc' ? diff : -diff;
       });
     }
 
     return sorted;
-  }, [found, sortType, sortDirection]);
+  }, [transcripts, sortType, sortDirection]);
 
   const handleSortClick = (type: 'date' | 'duration') => {
     if (sortType === type) {
@@ -85,16 +53,13 @@ export const Main = () => {
     if (isAllOpened) {
       setOpenedVideoIds(new Set());
     } else {
-      const allVideoIds = new Set(sortedFound.map(({ transcript }) => transcript.videoId));
+      const allVideoIds = new Set(sortedFound.map(it => it.videoId));
       setOpenedVideoIds(allVideoIds);
     }
   };
 
-  const handleCloseAll = () => {
-  };
-
   const isAllOpened = useMemo(() => {
-    return sortedFound.length > 0 && sortedFound.every(({ transcript }) => openedVideoIds.has(transcript.videoId))
+    return sortedFound.length > 0 && sortedFound.every(it => openedVideoIds.has(it.videoId))
   }, [sortedFound, openedVideoIds]);
 
   if (isLoading) {
@@ -145,10 +110,6 @@ export const Main = () => {
         </div>
       </div>
 
-      <div className="pb-6">
-        <SearchBar />
-      </div>
-
       {activeSearchQuery && (
         <div className="mb-4">
           <p className="text-sm text-muted-foreground">
@@ -161,11 +122,10 @@ export const Main = () => {
       )}
 
       <div className="space-y-4">
-        {sortedFound.map(({ transcript, matchingCaptions }) => (
+        {sortedFound.map((transcript) => (
             <VideoCard
               key={transcript.videoId}
               transcript={transcript}
-              matchingCaptions={matchingCaptions}
             />
           ))
         }

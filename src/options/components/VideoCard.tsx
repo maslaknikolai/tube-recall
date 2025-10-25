@@ -13,10 +13,9 @@ import { CopyButton } from './CopyButton';
 
 interface VideoCardProps {
   transcript: VideoTranscript;
-  matchingCaptions: Caption[];
 }
 
-export const VideoCard = ({ transcript, matchingCaptions }: VideoCardProps) => {
+export const VideoCard = ({ transcript }: VideoCardProps) => {
   const [openedVideoIds, setOpenedVideoIds] = useAtom(openedVideoIdsAtom);
   const [activeSearchQuery] = useAtom(activeSearchQueryAtom);
 
@@ -41,10 +40,6 @@ export const VideoCard = ({ transcript, matchingCaptions }: VideoCardProps) => {
       deleteMutation.mutate(transcript.videoId);
     }
   };
-
-  const captionsToDisplay = !!matchingCaptions.length ? matchingCaptions : transcript.captions;
-  const fullTranscriptText = captionsToDisplay.map(caption => caption.text).join(' ');
-
   return (
     <Card>
       <CardHeader className='flex flex-col gap-2'>
@@ -102,19 +97,20 @@ export const VideoCard = ({ transcript, matchingCaptions }: VideoCardProps) => {
           {isOpen && (
             <div className="relative">
               <CopyButton
-                text={fullTranscriptText}
+                transcript={transcript}
                 className="absolute top-2 right-6 z-10"
               />
+
               <div className="max-h-96 overflow-y-auto p-3 rounded-md bg-muted/30">
                 <p className="text-sm leading-relaxed pr-12">
-                  {captionsToDisplay.map((caption, index) => (
+                  {transcript.captions.map((caption, index) => (
                     <span
                       key={index}
                       onClick={() => openVideoAtTime(transcript.videoId, caption.start)}
                       className="cursor-pointer hover:bg-primary/20 hover:text-primary transition-colors rounded px-0.5"
                     >
                       {activeSearchQuery ? highlightText(caption.text, activeSearchQuery) : caption.text}
-                      {index < captionsToDisplay.length - 1 ? ' ' : ''}
+                      {index < transcript.captions.length - 1 ? ' ' : ''}
                     </span>
                   ))}
                 </p>
