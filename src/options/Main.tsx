@@ -1,50 +1,44 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { useTranscripts } from '@/hooks/queries/useTranscripts';
 import { VideoTranscript, Caption } from '@/types/VideoTranscript';
 import { VideoCard } from './components/VideoCard';
 import { DownloadAllButton } from './components/DownloadAllButton';
 import { Button } from '@/components/ui/button';
-import { openedVideoIdsAtom } from '@/lib/atoms';
-
-type SortType = 'date' | 'duration';
-type SortDirection = 'asc' | 'desc';
+import { openedVideoIdsAtom, sortStateAtom } from '@/lib/atoms';
 
 export const Main = () => {
   const { data: transcripts = [], isLoading } = useTranscripts();
-  const [sortType, setSortType] = useState<SortType>('date');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-
+  const [sortState, setSortState] = useAtom(sortStateAtom);
   const [openedVideoIds, setOpenedVideoIds] = useAtom(openedVideoIdsAtom);
 
   const sorted = useMemo(() => {
     const sorted = [...transcripts];
 
-    if (sortType === 'date') {
+    if (sortState.type === 'date') {
       sorted.sort((a, b) => {
         const dateA = a.watchedAt ?? 0;
         const dateB = b.watchedAt ?? 0;
         const diff = dateB - dateA;
-        return sortDirection === 'asc' ? -diff : diff;
+        return sortState.direction === 'asc' ? -diff : diff;
       });
-    } else if (sortType === 'duration') {
+    } else if (sortState.type === 'duration') {
       sorted.sort((a, b) => {
         const durationA = a.videoDuration ?? 0;
         const durationB = b.videoDuration ?? 0;
         const diff = durationA - durationB;
-        return sortDirection === 'asc' ? diff : -diff;
+        return sortState.direction === 'asc' ? diff : -diff;
       });
     }
 
     return sorted;
-  }, [transcripts, sortType, sortDirection]);
+  }, [transcripts, sortState]);
 
   const handleSortClick = (type: 'date' | 'duration') => {
-    if (sortType === type) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    if (sortState.type === type) {
+      setSortState({ type, direction: sortState.direction === 'asc' ? 'desc' : 'asc' });
     } else {
-      setSortType(type);
-      setSortDirection('asc');
+      setSortState({ type, direction: 'asc' });
     }
   };
 
@@ -84,19 +78,19 @@ export const Main = () => {
         <span className="text-sm text-muted-foreground">Sort by:</span>
 
         <Button
-          variant={sortType === 'date' ? 'default' : 'outline'}
+          variant={sortState.type === 'date' ? 'default' : 'outline'}
           size="sm"
           onClick={() => handleSortClick('date')}
         >
-          Date {sortType === 'date' && (sortDirection === 'asc' ? '↑' : '↓')}
+          Date {sortState.type === 'date' && (sortState.direction === 'asc' ? '↑' : '↓')}
         </Button>
 
         <Button
-          variant={sortType === 'duration' ? 'default' : 'outline'}
+          variant={sortState.type === 'duration' ? 'default' : 'outline'}
           size="sm"
           onClick={() => handleSortClick('duration')}
         >
-          Duration {sortType === 'duration' && (sortDirection === 'asc' ? '↑' : '↓')}
+          Duration {sortState.type === 'duration' && (sortState.direction === 'asc' ? '↑' : '↓')}
         </Button>
 
         <div className="ml-auto flex gap-2">
