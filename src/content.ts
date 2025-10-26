@@ -66,7 +66,7 @@ function listenForSubtitles() {
                 })(),
                 title: document.title,
                 captions,
-                videoDuration: videoElement ? Math.floor(videoElement.duration) : undefined,
+                videoDuration: videoElement ? Math.floor(videoElement.duration) : 0,
                 watchedAt: Date.now()
             };
 

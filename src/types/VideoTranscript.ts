@@ -2,8 +2,8 @@ export interface VideoTranscript {
   videoId: string;
   title: string;
   captions: Caption[];
-  videoDuration?: number; // Video length in seconds
-  watchedAt?: number; // Timestamp when video was watched
+  videoDuration: number;
+  watchedAt: number;
 }
 
 export interface Caption {

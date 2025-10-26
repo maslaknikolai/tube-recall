@@ -74,19 +74,10 @@ export const VideoCard = ({ transcript }: VideoCardProps) => {
         </CardTitle>
 
         <CardDescription className="flex items-center gap-2 flex-wrap">
-          {!!transcript.videoDuration && (
-            <>
-              <Clock className="h-3 w-3" />
-              <span>Duration: {formatTime(transcript.videoDuration)}</span>
-            </>
-          )}
-
-          {!!transcript.watchedAt && (
-            <>
-              {transcript.videoDuration !== undefined && <span>•</span>}
-              <span>Last watch: {formatDate(transcript.watchedAt)}</span>
-            </>
-          )}
+          <Clock className="h-3 w-3" />
+          <span>Duration: {formatTime(transcript.videoDuration)}</span>
+          <span>•</span>
+          <span>Last watch: {formatDate(transcript.watchedAt)}</span>
         </CardDescription>
       </CardHeader>
 
