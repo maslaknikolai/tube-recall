@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useAtom } from 'jotai';
-import { useTranscripts } from '@/hooks/queries/useTranscripts';
-import { VideoTranscript, Caption } from '@/types/VideoTranscript';
+import { useTranscripts } from '@/options/hooks/queries/useTranscripts';
 import { VideoCard } from './components/VideoCard';
 import { DownloadAllButton } from './components/DownloadAllButton';
-import { Button } from '@/components/ui/button';
-import { openedVideoIdsAtom, sortStateAtom } from '@/lib/atoms';
+import { Button } from '@/options/components/ui/button';
+import { sortStateAtom } from '@/options/store/sort';
+import { openedVideoIdsAtom } from './store/opened-videos';
 
 export const Main = () => {
   const { data: transcripts = [], isLoading } = useTranscripts();

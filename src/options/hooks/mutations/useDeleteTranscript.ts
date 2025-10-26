@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteTranscript } from '@/lib/transcriptsStore';
-import { queryKeys } from '@/lib/queryKeys';
+import { deleteTranscript } from '@/store/transcriptsStore';
+import { queryKeys } from '@/options/lib/queryKeys';
 
 export const useDeleteTranscript = () => {
   const queryClient = useQueryClient();

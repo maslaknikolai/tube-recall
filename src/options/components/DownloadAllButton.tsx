@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/options/components/ui/button';
 import { VideoTranscript } from '@/types/VideoTranscript';
 
 interface DownloadAllButtonProps {

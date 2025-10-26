@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
 import { TimedTextResponse } from "./types/TimedTextResponse";
 import { Caption, VideoTranscript } from "./types/VideoTranscript";
-import { setTranscript, getTranscript } from "./lib/transcriptsStore";
+import { setTranscript, getTranscript } from "./store/transcriptsStore";
 
 injectFetchRewrite()
 listenForSubtitles()

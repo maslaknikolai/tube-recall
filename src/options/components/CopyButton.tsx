@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/options/components/ui/button';
 import { Copy, Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/options/lib/utils';
 import { VideoTranscript } from '@/types/VideoTranscript';
 
 interface CopyButtonProps {

@@ -1,13 +1,13 @@
 import { VideoTranscript, Caption } from '@/types/VideoTranscript';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Toggle } from '@/components/ui/toggle';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/options/components/ui/card';
+import { Button } from '@/options/components/ui/button';
+import { Toggle } from '@/options/components/ui/toggle';
 import { Clock, Play, ChevronDown, ChevronRight, Trash2 } from 'lucide-react';
-import { useDeleteTranscript } from '@/hooks/mutations/useDeleteTranscript';
-import { openVideoAtTime } from '@/lib/videoUtils';
-import { formatTime, formatDate } from '@/lib/formatUtils';
+import { useDeleteTranscript } from '@/options/hooks/mutations/useDeleteTranscript';
+import { openVideoAtTime } from '@/options/lib/videoUtils';
+import { formatTime, formatDate } from '@/options/lib/formatUtils';
 import { useAtom } from 'jotai';
-import { openedVideoIdsAtom } from '@/lib/atoms';
+import { openedVideoIdsAtom } from '@/options/store/opened-videos';
 import { CopyButton } from './CopyButton';
 
 interface VideoCardProps {
