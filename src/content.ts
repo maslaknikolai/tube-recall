@@ -16,7 +16,10 @@ function injectFetchRewrite() {
 
 function listenForSubtitles() {
     window.addEventListener("message", async (event) => {
-        if (event.data?.type !== "XHR_CAPTURE") {
+        if (
+            location.pathname !== "/watch" ||
+            event.data?.type !== "XHR_CAPTURE"
+        ) {
             return
         }
 
