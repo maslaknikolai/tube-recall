@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/options/components/ui/dropdown-menu';
-import { Clock, Play, ChevronDown, ChevronRight, Trash2, AlertTriangle } from 'lucide-react';
+import { Clock, ChevronDown, ChevronRight, Trash2, AlertTriangle, ExternalLink } from 'lucide-react';
 import { useDeleteTranscript } from '@/options/hooks/mutations/useDeleteTranscript';
 import { openVideoAtTime } from '@/options/lib/videoUtils';
 import { formatTime, formatDate } from '@/options/lib/formatUtils';
@@ -63,12 +63,14 @@ export const VideoCard = ({ transcript }: VideoCardProps) => {
           <span className="truncate flex-1">{transcript.title}</span>
 
           <div className="flex gap-2 shrink-0">
-            <Button
-              onClick={() => openVideoAtTime(transcript.videoId)}
-              variant="default"
+            <a
+              href={`https://www.youtube.com/watch?v=${transcript.videoId}`}
+              target="_blank"
             >
-              <Play className="h-4 w-4" />
-            </Button>
+              <Button variant="default">
+                <ExternalLink className="h-4 w-4" />
+              </Button>
+            </a>
 
             <DropdownMenu open={showConfirmation} onOpenChange={setShowConfirmation}>
               <DropdownMenuTrigger>
