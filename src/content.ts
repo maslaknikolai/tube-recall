@@ -16,18 +16,28 @@ function injectFetchRewrite() {
 
 function listenForSubtitles() {
     window.addEventListener("message", async (event) => {
+        const title = document.querySelector<HTMLElement>('#title.style-scope.ytd-watch-metadata')?.innerText.trim()
+
         if (
             location.pathname !== "/watch" || // captions may be requested from other pages as well
+            !title || // ensure we are on a video page
             event.data?.type !== "XHR_CAPTURE"
         ) {
             return
         }
 
-        const data = event.data as { type: "XHR_CAPTURE", url: string, body: string }
+        const data = event.data as {
+            type: "XHR_CAPTURE",
+            url: string,
+            body: string,
+            ytInitialData: any
+        }
 
         if (!data.url.includes('/api/timedtext')) {
             return
         }
+
+        console.log('ytInitialData', data.ytInitialData);
 
         const parsedBody = (() => {
             try {
@@ -78,7 +88,7 @@ function listenForSubtitles() {
             const transcript: VideoTranscript = {
                 ...savedVideoData,
                 videoId,
-                title: document.title,
+                title,
                 captions: {
                     ...savedVideoData?.captions,
                     [tlang]: newCaptions

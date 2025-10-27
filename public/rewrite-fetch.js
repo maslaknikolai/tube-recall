@@ -12,10 +12,13 @@
         try {
           const url = this.responseURL;
           const body = this.responseText;
-          window.postMessage(
-            { type: "XHR_CAPTURE", url, body },
-            "*"
-          );
+
+          window.postMessage({
+            type: "XHR_CAPTURE",
+            url,
+            body,
+            ytInitialData: window.ytInitialData,
+          }, "*");
         } catch (err) {
           console.warn("[xhr-hook] error:", err);
         }
