@@ -17,7 +17,7 @@ function injectFetchRewrite() {
 function listenForSubtitles() {
     window.addEventListener("message", async (event) => {
         if (
-            location.pathname !== "/watch" ||
+            location.pathname !== "/watch" || // captions may be requested from other pages as well
             event.data?.type !== "XHR_CAPTURE"
         ) {
             return

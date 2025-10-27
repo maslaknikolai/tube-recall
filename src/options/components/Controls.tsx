@@ -4,9 +4,12 @@ import { SortControls } from './SortControls';
 import { Filters } from './Filters';
 import { ToggleOpenButton } from './ToggleOpenButton';
 import { SearchField } from './SearchField';
+import { useProcessedTranscripts } from '../AppProvider';
 
 
-export const Controls = ({ transcripts }: { transcripts: VideoTranscript[] }) => {
+export const Controls = () => {
+  const transcripts = useProcessedTranscripts()
+
   return (
     <div className="mb-6 flex gap-2 flex-wrap justify-between">
       <div className='flex flex-col gap-2'>

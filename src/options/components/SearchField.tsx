@@ -16,6 +16,7 @@ export const SearchField = () => {
         placeholder="Search transcripts..."
         className="w-full"
       />
+
       {!!searchQuery && (
         <Button onClick={() => setSearchQuery('')}>
           <X />

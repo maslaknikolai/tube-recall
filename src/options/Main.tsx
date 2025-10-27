@@ -1,11 +1,10 @@
-import { useTranscriptsQuery } from '@/options/hooks/queries/useTranscripts';
 import { VideoCard } from './components/VideoCard';
-import { useSortedTranscripts } from './hooks/useSortedTranscripts';
 import { Controls } from './components/Controls';
 import { BuyMeACoffeLink } from './components/BuyMeACoffeLink';
+import { useProcessedTranscripts } from './AppProvider';
 
 export const Main = () => {
-  const transcripts = useSortedTranscripts()
+  const transcripts = useProcessedTranscripts()
 
   return (
     <div className="container mx-auto p-6 max-w-4xl">
@@ -23,7 +22,7 @@ export const Main = () => {
         </p>
       </div>
 
-      <Controls transcripts={transcripts} />
+      <Controls />
 
       {!transcripts.length ? (
         <div className='flex items-center justify-center p-4 text-sm'>
