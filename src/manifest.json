@@ -30,7 +30,7 @@
       "run_at": "document_start"
     }
   ],
-  "permissions": ["webRequest", "scripting", "storage"],
+  "permissions": ["scripting", "storage"],
   "host_permissions": ["https://*.youtube.com/*"],
   "web_accessible_resources": [
   {
