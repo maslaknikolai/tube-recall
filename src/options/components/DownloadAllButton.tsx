@@ -1,5 +1,6 @@
 import { Button } from '@/options/components/ui/button';
 import { VideoTranscript } from '@/types/VideoTranscript';
+import { Download } from 'lucide-react';
 
 interface DownloadAllButtonProps {
   transcripts: VideoTranscript[];
@@ -26,6 +27,7 @@ export const DownloadAllButton = ({ transcripts }: DownloadAllButtonProps) => {
       onClick={handleDownloadAll}
       disabled={!transcripts.length}
     >
+      <Download />
       Download All
     </Button>
   );

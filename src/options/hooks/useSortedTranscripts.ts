@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { sortAtom } from "../store/sort";
 import { useAtom } from "jotai";
-import { useTranscripts } from "./queries/useTranscripts";
+import { useTranscriptsQuery } from "./queries/useTranscripts";
 
 export function useSortedTranscripts() {
-    const { data: transcripts = [] } = useTranscripts();
+    const { data: transcripts = [] } = useTranscriptsQuery();
     const [sortState] = useAtom(sortAtom);
 
     return useMemo(() => {

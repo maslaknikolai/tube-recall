@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getAllTranscripts } from '@/store/transcriptsStore';
 import { queryKeys } from '@/options/lib/queryKeys';
 
-export const useTranscripts = () => {
+export const useTranscriptsQuery = () => {
   return useQuery({
     queryKey: queryKeys.transcripts,
     queryFn: async () => {

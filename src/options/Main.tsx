@@ -1,11 +1,10 @@
-import { useTranscripts } from '@/options/hooks/queries/useTranscripts';
+import { useTranscriptsQuery } from '@/options/hooks/queries/useTranscripts';
 import { VideoCard } from './components/VideoCard';
 import { useSortedTranscripts } from './hooks/useSortedTranscripts';
 import { Controls } from './components/Controls';
 import { BuyMeACoffeLink } from './components/BuyMeACoffeLink';
 
 export const Main = () => {
-  const { isLoading } = useTranscripts();
   const transcripts = useSortedTranscripts()
 
   return (
