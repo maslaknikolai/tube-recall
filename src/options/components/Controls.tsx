@@ -2,25 +2,14 @@ import { useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { Button } from '@/options/components/ui/button';
 import { DownloadAllButton } from './DownloadAllButton';
-import { sortStateAtom } from '@/options/store/sort';
 import { openedVideoIdsAtom } from '@/options/store/opened-videos';
 import type { VideoTranscript } from '@/types/VideoTranscript';
+import { SortControls } from './SortControls';
+import { Filters } from './Filters';
 
-interface ControlButtonsProps {
-  transcripts: VideoTranscript[];
-}
 
-export const ControlButtons = ({ transcripts }: ControlButtonsProps) => {
-  const [sortState, setSortState] = useAtom(sortStateAtom);
+export const Controls = ({ transcripts }: { transcripts: VideoTranscript[] }) => {
   const [openedVideoIds, setOpenedVideoIds] = useAtom(openedVideoIdsAtom);
-
-  const handleSortClick = (type: 'date' | 'duration') => {
-    if (sortState.type === type) {
-      setSortState({ type, direction: sortState.direction === 'asc' ? 'desc' : 'asc' });
-    } else {
-      setSortState({ type, direction: 'asc' });
-    }
-  };
 
   const toggleIsAllOpened = () => {
     if (isAllOpened) {
@@ -37,23 +26,9 @@ export const ControlButtons = ({ transcripts }: ControlButtonsProps) => {
 
   return (
     <div className="mb-6 flex items-center gap-2 flex-wrap">
-      <span className="text-sm text-muted-foreground">Sort by:</span>
-
-      <Button
-        variant={sortState.type === 'date' ? 'default' : 'outline'}
-        size="sm"
-        onClick={() => handleSortClick('date')}
-      >
-        Date {sortState.type === 'date' && (sortState.direction === 'asc' ? '↑' : '↓')}
-      </Button>
-
-      <Button
-        variant={sortState.type === 'duration' ? 'default' : 'outline'}
-        size="sm"
-        onClick={() => handleSortClick('duration')}
-      >
-        Duration {sortState.type === 'duration' && (sortState.direction === 'asc' ? '↑' : '↓')}
-      </Button>
+      <Filters />
+        <span>•</span>
+      <SortControls />
 
       <div className="ml-auto flex gap-2">
         <DownloadAllButton transcripts={transcripts} />
