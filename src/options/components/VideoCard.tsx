@@ -1,14 +1,21 @@
-import { VideoTranscript, Caption } from '@/types/VideoTranscript';
+import { VideoTranscript } from '@/types/VideoTranscript';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/options/components/ui/card';
 import { Button } from '@/options/components/ui/button';
 import { Toggle } from '@/options/components/ui/toggle';
-import { Clock, Play, ChevronDown, ChevronRight, Trash2 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/options/components/ui/dropdown-menu';
+import { Clock, Play, ChevronDown, ChevronRight, Trash2, AlertTriangle } from 'lucide-react';
 import { useDeleteTranscript } from '@/options/hooks/mutations/useDeleteTranscript';
 import { openVideoAtTime } from '@/options/lib/videoUtils';
 import { formatTime, formatDate } from '@/options/lib/formatUtils';
 import { useAtom } from 'jotai';
 import { openedVideoIdsAtom } from '@/options/store/opened-videos';
 import { CopyButton } from './CopyButton';
+import { useState } from 'react';
 
 interface VideoCardProps {
   transcript: VideoTranscript;
@@ -32,11 +39,11 @@ export const VideoCard = ({ transcript }: VideoCardProps) => {
   };
 
   const deleteMutation = useDeleteTranscript();
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleDelete = () => {
-    if (window.confirm(`Are you sure you want to delete the transcript for "${transcript.title}"?`)) {
-      deleteMutation.mutate(transcript.videoId);
-    }
+    deleteMutation.mutate(transcript.videoId);
+    setShowConfirmation(false);
   };
   return (
     <Card>
@@ -63,13 +70,31 @@ export const VideoCard = ({ transcript }: VideoCardProps) => {
               <Play className="h-4 w-4" />
             </Button>
 
-            <Button
-              onClick={handleDelete}
-              variant="destructive"
-              disabled={deleteMutation.isPending}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+            <DropdownMenu open={showConfirmation} onOpenChange={setShowConfirmation}>
+              <DropdownMenuTrigger>
+                <Button
+                  variant="destructive"
+                  disabled={deleteMutation.isPending}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem
+                  className="flex items-center gap-2 text-destructive focus:text-destructive cursor-pointer"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    handleDelete();
+                  }}
+                >
+                  <AlertTriangle className="h-4 w-4" />
+                  <div className="flex flex-col">
+                    <span className="font-semibold">Delete transcript</span>
+                    <span className="text-xs text-muted-foreground">This action cannot be undone</span>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </CardTitle>
 
