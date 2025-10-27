@@ -7,13 +7,13 @@ import { useVideoCard } from './VideoCard/VideoCardContext';
 
 export const CopyButton = () => {
   const {selectedLanguage, transcript} = useVideoCard();
-  const selectedTranscript = transcript.captions[selectedLanguage]
+  const selectedLangCaptions = transcript.captions[selectedLanguage]
 
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = async () => {
     try {
-      const text = selectedTranscript.map(caption => caption.text).join(' ');
+      const text = selectedLangCaptions.map(caption => caption.text).join(' ');
       await navigator.clipboard.writeText(text);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);

@@ -45,7 +45,8 @@ function listenForSubtitles() {
         }
 
         try {
-            const newCaptions = parsedBody.events.reduce<Caption[]>((acc, e) => {
+            let i = -1
+            const newCaptions = parsedBody.events.reduce<Caption[]>((acc, e, i) => {
                 if (!e.segs) {
                     return acc;
                 }
@@ -54,6 +55,7 @@ function listenForSubtitles() {
 
                 if (text) {
                     acc.push({
+                        id: `${tlang}-${i}`,
                         start: e.tStartMs,
                         end: e.tStartMs + (e.dDurationMs || 0),
                         text
@@ -81,6 +83,7 @@ function listenForSubtitles() {
                     ...savedVideoData?.captions,
                     [tlang]: newCaptions
                 },
+                starredCaptions: savedVideoData?.starredCaptions || {},
                 videoDuration: videoElement ? Math.floor(videoElement.duration) : 0,
                 watchedAt: Date.now()
             };

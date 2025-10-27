@@ -1,7 +1,7 @@
 import { DownloadAllButton } from './DownloadAllButton';
 import type { VideoTranscript } from '@/types/VideoTranscript';
 import { SortControls } from './SortControls';
-import { Filters } from './Filters';
+import { StarredFilter } from './StarredFilter';
 import { ToggleOpenAllButton } from './ToggleOpenAllButton';
 import { SearchField } from './SearchField';
 import { useProcessedTranscripts } from '../AppProvider';
@@ -16,7 +16,7 @@ export const Controls = () => {
         <SearchField />
 
         <div className="flex">
-          <Filters />
+          <StarredFilter />
           <span>•</span>
           <SortControls />
         </div>

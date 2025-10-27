@@ -3,25 +3,25 @@ import { Button } from '@/options/components/ui/button';
 import { filterByAtom } from '@/options/store/filter';
 import { Star } from 'lucide-react';
 
-export const Filters = () => {
-  const [filterBy, setFilterBy] = useAtom(filterByAtom);
+export const StarredFilter = () => {
+  const [starredFilter, setStarredFilter] = useAtom(filterByAtom);
 
   return (
     <div className="flex items-center gap-2">
       <span className="text-sm text-muted-foreground">Show:</span>
 
       <Button
-        variant={filterBy === 'all' ? 'default' : 'outline'}
+        variant={starredFilter === 'all' ? 'default' : 'outline'}
         size="sm"
-        onClick={() => setFilterBy('all')}
+        onClick={() => setStarredFilter('all')}
       >
         All
       </Button>
 
       <Button
-        variant={filterBy === 'starred' ? 'default' : 'outline'}
+        variant={starredFilter === 'starred' ? 'default' : 'outline'}
         size="sm"
-        onClick={() => setFilterBy('starred')}
+        onClick={() => setStarredFilter('starred')}
       >
         <Star className="h-4 w-4" />
       </Button>

@@ -1,20 +1,16 @@
-import { SortState } from "../store/sort";
+import { StarredFilter } from "../store/filter";
 import { Caption, Lang, VideoTranscript } from "@/types/VideoTranscript";
 
-export function searchTranscripts(transcripts: VideoTranscript[], searchQuery: string) {
-  if (!searchQuery) {
+export function filterStarred(transcripts: VideoTranscript[], starredFilter: StarredFilter) {
+  if (starredFilter === 'all') {
     return transcripts;
   }
 
-  const lowerCaseQuery = searchQuery.toLowerCase();
-
   return transcripts.reduce<VideoTranscript[]>((transcriptsAcc, transcript) => {
-    const titleMatch = transcript.title?.toLowerCase().includes(lowerCaseQuery);
-
     const matchedLanguages = Object.entries(transcript.captions)
       .reduce<Record<Lang, Caption[]>>((captionsAcc, [langCode, captions]) => {
-        const matchedCaptions = captions.reduce<Caption[]>((captionAcc, caption) => {
-          if (caption.text.toLowerCase().includes(lowerCaseQuery)) {
+        const matchedCaptions = captions.reduce<Caption[]>((captionAcc, caption, index) => {
+          if (transcript.starredCaptions[caption.id]) {
             captionAcc.push(caption);
           }
 
@@ -28,9 +24,11 @@ export function searchTranscripts(transcripts: VideoTranscript[], searchQuery: s
         return captionsAcc;
       }, {});
 
+    console.log('WIPWIP', matchedLanguages);
+
     const hasMatchedCaptions = Object.keys(matchedLanguages).length > 0;
 
-    if (titleMatch || hasMatchedCaptions) {
+    if (hasMatchedCaptions) {
       transcriptsAcc.push({
         ...transcript,
         captions: hasMatchedCaptions ? matchedLanguages : transcript.captions,
@@ -39,4 +37,5 @@ export function searchTranscripts(transcripts: VideoTranscript[], searchQuery: s
 
     return transcriptsAcc;
   }, []);
+
 }
