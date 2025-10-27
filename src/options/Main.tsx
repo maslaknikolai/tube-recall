@@ -1,6 +1,7 @@
 import { VideoCard } from './components/VideoCard/VideoCard';
 import { Controls } from './components/Controls';
 import { BuyMeACoffeLink } from './components/BuyMeACoffeLink';
+import { AboutModal } from './components/AboutModal';
 import { useProcessedTranscripts } from './AppProvider';
 
 export const Main = () => {
@@ -10,9 +11,12 @@ export const Main = () => {
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="mb-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold mb-2">
-            TubeRecall
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-bold mb-2">
+              TubeRecall
+            </h1>
+            <AboutModal />
+          </div>
 
           <BuyMeACoffeLink />
         </div>
