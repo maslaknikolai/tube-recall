@@ -1,7 +1,6 @@
-import { useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { Button } from '@/options/components/ui/button';
-import { filterByAtom, sortAtom } from '@/options/store/sort';
+import { filterByAtom } from '@/options/store/filter';
 import { Star } from 'lucide-react';
 
 export const Filters = () => {

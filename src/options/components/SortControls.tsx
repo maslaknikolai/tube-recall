@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { Button } from '@/options/components/ui/button';
 import { sortAtom, SortState } from '@/options/store/sort';
