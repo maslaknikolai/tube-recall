@@ -1,4 +1,4 @@
-import { VideoCard } from './components/VideoCard';
+import { VideoCard } from './components/VideoCard/VideoCard';
 import { Controls } from './components/Controls';
 import { BuyMeACoffeLink } from './components/BuyMeACoffeLink';
 import { useProcessedTranscripts } from './AppProvider';
@@ -26,7 +26,7 @@ export const Main = () => {
 
       {!transcripts.length ? (
         <div className='flex items-center justify-center p-4 text-sm'>
-          No trancripts yet. Transcripts will appear here after watching videos on YouTube with captions enabled.
+          No transcripts yet. Transcripts will appear here after watching videos on YouTube with captions enabled.
         </div>
       ): (
         <div className="flex flex-col gap-4">

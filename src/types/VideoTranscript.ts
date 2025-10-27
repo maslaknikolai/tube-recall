@@ -1,7 +1,10 @@
+export const DEFAULT_LANG = 'default' as const
+export type Lang = string
+
 export interface VideoTranscript {
   videoId: string;
   title: string;
-  captions: Caption[];
+  captions: Record<Lang, Caption[]>;
   videoDuration: number;
   watchedAt: number;
 }

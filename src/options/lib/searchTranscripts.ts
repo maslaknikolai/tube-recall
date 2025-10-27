@@ -8,21 +8,5 @@ export function searchTranscripts(transcripts: VideoTranscript[], searchQuery: s
 
   const lowerCaseQuery = searchQuery.toLowerCase();
 
-  return transcripts.reduce<VideoTranscript[]>((acc, transcript) => {
-    const titleMatch = transcript.title?.toLowerCase().includes(lowerCaseQuery);
-    const captions = transcript.captions
-
-    const matchedCaptions = captions.filter(caption =>
-      caption.text.toLowerCase().includes(lowerCaseQuery)
-    );
-
-    if (titleMatch || matchedCaptions.length > 0) {
-      acc.push({
-        ...transcript,
-        captions: matchedCaptions,
-      });
-    }
-
-    return acc;
-  }, []);
+  return transcripts
 }

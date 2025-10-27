@@ -2,7 +2,7 @@ import { DownloadAllButton } from './DownloadAllButton';
 import type { VideoTranscript } from '@/types/VideoTranscript';
 import { SortControls } from './SortControls';
 import { Filters } from './Filters';
-import { ToggleOpenButton } from './ToggleOpenButton';
+import { ToggleOpenAllButton } from './ToggleOpenAllButton';
 import { SearchField } from './SearchField';
 import { useProcessedTranscripts } from '../AppProvider';
 
@@ -24,7 +24,7 @@ export const Controls = () => {
 
       <div className="flex gap-2">
         <DownloadAllButton transcripts={transcripts} />
-        <ToggleOpenButton />
+        <ToggleOpenAllButton />
       </div>
     </div>
   );

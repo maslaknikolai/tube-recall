@@ -1,6 +1,6 @@
 import browser from "webextension-polyfill";
 import { TimedTextResponse } from "./types/TimedTextResponse";
-import { Caption, VideoTranscript } from "./types/VideoTranscript";
+import { Caption, DEFAULT_LANG, VideoTranscript } from "./types/VideoTranscript";
 import { setTranscript, getTranscript } from "./store/transcriptsStore";
 
 injectFetchRewrite()
@@ -37,13 +37,15 @@ function listenForSubtitles() {
             }
         })()
 
+        const tlang = new URL(data.url).searchParams.get('tlang') || DEFAULT_LANG;
+
         if (!parsedBody) {
             console.warn('TubeRecall: Cannot parse timedtext response', data.body);
             return
         }
 
         try {
-            const captions = parsedBody.events.reduce<Caption[]>((acc, e) => {
+            const newCaptions = parsedBody.events.reduce<Caption[]>((acc, e) => {
                 if (!e.segs) {
                     return acc;
                 }
@@ -62,24 +64,32 @@ function listenForSubtitles() {
 
             const videoElement = document.querySelector('video.html5-main-video') as HTMLVideoElement;
 
-            const videoTranscript: VideoTranscript = {
-                videoId: (() => {
-                    const urlParams = new URLSearchParams(data.url.split('?')[1]);
-                    return urlParams.get('v') || 'unknown';
-                })(),
+            const videoId = new URL(data.url).searchParams.get('v');
+
+            if (!videoId) {
+                console.warn('TubeRecall: Cannot extract videoId from timedtext URL', data.url);
+                return;
+            }
+
+            const savedVideoData = await getTranscript(videoId);
+
+            const transcript: VideoTranscript = {
+                ...savedVideoData,
+                videoId,
                 title: document.title,
-                captions,
+                captions: {
+                    ...savedVideoData?.captions,
+                    [tlang]: newCaptions
+                },
                 videoDuration: videoElement ? Math.floor(videoElement.duration) : 0,
                 watchedAt: Date.now()
             };
 
-            await setTranscript(videoTranscript);
-
-            const video = await getTranscript(videoTranscript.videoId);
+            await setTranscript(transcript);
 
             showSavedNotification();
 
-            console.log('TubeRecall: saved subtitles', video);
+            console.log('TubeRecall: saved subtitles', transcript, tlang, newCaptions);
         } catch (e) {
             console.warn('TubeRecall: Failed to extract captions', e);
         }
