@@ -4,10 +4,12 @@ console.log("Hello from the background!");
 
 browser.runtime.onInstalled.addListener((details) => {
   console.log("Extension installed:", details);
+
+  if (details.reason === 'install') {
+    browser.runtime.openOptionsPage();
+  }
 });
 
 browser.action.onClicked.addListener(() => {
-  browser.tabs.create({
-    url: browser.runtime.getURL('src/options.html')
-  });
+  browser.runtime.openOptionsPage();
 });
