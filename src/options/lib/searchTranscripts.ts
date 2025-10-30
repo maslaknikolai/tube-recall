@@ -1,14 +1,14 @@
 import { SortState } from "../store/sort";
-import { Caption, Lang, VideoTranscript } from "@/types/VideoTranscript";
+import { Caption, Lang, Transcript } from "@/types/Transcript";
 
-export function searchTranscripts(transcripts: VideoTranscript[], searchQuery: string) {
+export function searchTranscripts(transcripts: Transcript[], searchQuery: string) {
   if (!searchQuery) {
     return transcripts;
   }
 
   const lowerCaseQuery = searchQuery.toLowerCase();
 
-  return transcripts.reduce<VideoTranscript[]>((transcriptsAcc, transcript) => {
+  return transcripts.reduce<Transcript[]>((transcriptsAcc, transcript) => {
     const titleMatch = transcript.title?.toLowerCase().includes(lowerCaseQuery);
 
     const matchedLanguages = Object.entries(transcript.captions)

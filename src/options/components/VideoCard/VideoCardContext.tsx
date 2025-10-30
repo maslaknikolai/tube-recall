@@ -1,8 +1,8 @@
 import { createContext, useContext, ReactNode, useState } from 'react';
-import type { VideoTranscript, Lang } from '@/types/VideoTranscript';
+import type { Transcript, Lang } from '@/types/Transcript';
 
 interface VideoCardContextValue {
-  transcript: VideoTranscript;
+  transcript: Transcript;
   selectedLanguage: Lang;
   setSelectedLanguage: (lang: Lang) => void;
 }
@@ -19,7 +19,7 @@ export function useVideoCard() {
 
 interface VideoCardProviderProps {
   children: ReactNode;
-  transcript: VideoTranscript;
+  transcript: Transcript;
 }
 
 export function VideoCardProvider({ children, transcript }: VideoCardProviderProps) {

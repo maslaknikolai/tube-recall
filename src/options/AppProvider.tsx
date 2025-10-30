@@ -1,6 +1,5 @@
 import { createContext, useContext, useDeferredValue, useMemo } from 'react';
 
-import { useTranscriptsQuery } from './hooks/queries/useTranscripts';
 import { sortTranscripts } from './lib/sortTranscripts';
 import { useAtom } from 'jotai';
 import { sortAtom } from './store/sort';
@@ -8,6 +7,8 @@ import { searchTranscripts } from './lib/searchTranscripts';
 import { searchQueryAtom } from './store/search';
 import { filterByAtom } from './store/filter';
 import { filterStarred } from './lib/filterStarred';
+import { useStore } from './hooks/use-store';
+import { transcriptsStore } from '@/store/transcriptsStore';
 
 type AppContextValue = {
   proccessedTranscripts: ReturnType<typeof sortTranscripts>;
@@ -16,7 +17,8 @@ type AppContextValue = {
 const context = createContext<AppContextValue>(null as unknown as AppContextValue);
 
 export const AppProvider = ({children}: {children: React.ReactNode}) => {
-  const { data: transcripts = [] } = useTranscriptsQuery();
+  const [transcripts] = useStore(transcriptsStore)
+  const transcriptsArray = useMemo(() => Object.values(transcripts), [transcripts]);
 
   const [sortState] = useAtom(sortAtom);
   const [starredFilter] = useAtom(filterByAtom);
@@ -25,7 +27,7 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
   const searchQueryDeferred = useDeferredValue(searchQuery);
 
   const proccessedTranscripts = useMemo(() => {
-    const found = searchTranscripts(transcripts, searchQueryDeferred)
+    const found = searchTranscripts(transcriptsArray, searchQueryDeferred)
     const filtered = filterStarred(found, starredFilter)
     const sorted = sortTranscripts(filtered, sortState)
 

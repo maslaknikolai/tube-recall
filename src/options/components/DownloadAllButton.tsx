@@ -1,9 +1,9 @@
 import { Button } from '@/options/components/ui/button';
-import { VideoTranscript } from '@/types/VideoTranscript';
+import { Transcript } from '@/types/Transcript';
 import { Download } from 'lucide-react';
 
 interface DownloadAllButtonProps {
-  transcripts: VideoTranscript[];
+  transcripts: Transcript[];
 }
 
 export const DownloadAllButton = ({ transcripts }: DownloadAllButtonProps) => {

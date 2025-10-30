@@ -1,5 +1,4 @@
 import { DownloadAllButton } from './DownloadAllButton';
-import type { VideoTranscript } from '@/types/VideoTranscript';
 import { SortControls } from './SortControls';
 import { StarredFilter } from './StarredFilter';
 import { ToggleOpenAllButton } from './ToggleOpenAllButton';

@@ -1,4 +1,4 @@
-import { VideoTranscript } from '@/types/VideoTranscript';
+import { Transcript } from '@/types/Transcript';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/options/components/ui/card';
 import { Button } from '@/options/components/ui/button';
 import { Clock, ExternalLink } from 'lucide-react';
@@ -9,9 +9,10 @@ import { DeleteButton } from './DeleteButton';
 import { useAtom } from 'jotai';
 import { openedVideoIdsAtom } from '@/options/store/opened-videos';
 import { VideoCardProvider } from './VideoCardContext';
+import { youtubeLink } from '@/options/lib/youtubeLink';
 
 interface VideoCardProps {
-  transcript: VideoTranscript;
+  transcript: Transcript;
 }
 
 export const VideoCard = ({ transcript }: VideoCardProps) => {
@@ -22,14 +23,16 @@ export const VideoCard = ({ transcript }: VideoCardProps) => {
     <VideoCardProvider transcript={transcript}>
       <Card>
         <CardHeader className='flex flex-col gap-2'>
-          <CardTitle className="text-lg flex gap-2 overflow-hidden w-full items-center">
+          <CardTitle className="flex gap-2 overflow-hidden w-full items-center">
             <ToggleOpenButton />
 
-            <span className="truncate flex-1">{transcript.title}</span>
+            <h2 className="truncate flex-1 text-lg">
+              {transcript.title}
+            </h2>
 
             <div className="flex gap-2 shrink-0">
               <a
-                href={`https://www.youtube.com/watch?v=${transcript.videoId}`}
+                href={youtubeLink(transcript.videoId, transcript.progress)}
                 target="_blank"
               >
                 <Button variant="default">
@@ -46,6 +49,13 @@ export const VideoCard = ({ transcript }: VideoCardProps) => {
             <span>Duration: {formatTime(transcript.videoDuration)}</span>
             <span>•</span>
             <span>Last watch: {formatDate(transcript.watchedAt)}</span>
+            <span>•</span>
+            <a
+              href={youtubeLink(transcript.videoId, transcript.progress)}
+              target="_blank"
+            >
+              Progress: {formatTime(transcript.progress)}
+            </a>
           </CardDescription>
         </CardHeader>
 

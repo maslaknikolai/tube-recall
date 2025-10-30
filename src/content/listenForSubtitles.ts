@@ -1,20 +1,9 @@
-import browser from "webextension-polyfill";
-import { TimedTextResponse } from "./types/TimedTextResponse";
-import { Caption, DEFAULT_LANG, VideoTranscript } from "./types/VideoTranscript";
-import { setTranscript, getTranscript } from "./store/transcriptsStore";
+import { TimedTextResponse } from "@/types/TimedTextResponse"
+import { Caption, DEFAULT_LANG, Transcript } from "@/types/Transcript"
+import { showSavedNotification } from "./showSavedNotification"
+import { transcriptsStore } from "@/store/transcriptsStore"
 
-injectFetchRewrite()
-listenForSubtitles()
-
-function injectFetchRewrite() {
-    const s = document.createElement("script");
-    s.src = browser.runtime.getURL("rewrite-fetch.js");
-    s.async = false;
-    (document.head || document.documentElement).appendChild(s);
-    s.remove();
-}
-
-function listenForSubtitles() {
+export function listenForSubtitles() {
     window.addEventListener("message", async (event) => {
         const title = document.querySelector<HTMLElement>('#title.style-scope.ytd-watch-metadata')?.innerText.trim()
 
@@ -83,22 +72,27 @@ function listenForSubtitles() {
                 return;
             }
 
-            const savedVideoData = await getTranscript(videoId);
+            const transcripts = transcriptsStore.get()
+            const savedTranscript = transcripts[videoId];
 
-            const transcript: VideoTranscript = {
-                ...savedVideoData,
+            const transcript: Transcript = {
+                ...savedTranscript,
                 videoId,
                 title,
                 captions: {
-                    ...savedVideoData?.captions,
+                    ...savedTranscript?.captions,
                     [tlang]: newCaptions
                 },
-                starredCaptions: savedVideoData?.starredCaptions || {},
+                starredCaptions: savedTranscript?.starredCaptions || {},
                 videoDuration: videoElement ? Math.floor(videoElement.duration) : 0,
-                watchedAt: Date.now()
+                watchedAt: Date.now(),
+                progress: 0,
             };
 
-            await setTranscript(transcript);
+            transcriptsStore.set({
+                ...transcripts,
+                [videoId]: transcript
+            });
 
             showSavedNotification();
 
@@ -106,23 +100,5 @@ function listenForSubtitles() {
         } catch (e) {
             console.warn('TubeRecall: Failed to extract captions', e);
         }
-
     })
-}
-
-function showSavedNotification() {
-    const el = document.createElement("div");
-    el.textContent = "Transcript saved!";
-    el.style.position = "fixed";
-    el.style.top = "20px";
-    el.style.right = "20px";
-    el.style.padding = "10px 20px";
-    el.style.backgroundColor = "red";
-    el.style.color = "white";
-    el.style.borderRadius = "5px";
-    el.style.zIndex = "10000";
-    document.body.appendChild(el);
-    setTimeout(() => {
-        el.remove();
-    }, 3000);
 }

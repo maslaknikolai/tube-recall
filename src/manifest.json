@@ -26,7 +26,7 @@
   "content_scripts": [
     {
       "matches": ["https://*.youtube.com/*"],
-      "js": ["src/content.ts"],
+      "js": ["src/content/content.ts"],
       "run_at": "document_start"
     }
   ],
@@ -36,7 +36,7 @@
   {
     "matches": ["https://*.youtube.com/*"],
     "resources": [
-      "rewrite-fetch.js"
+      "injectable.js"
     ]
   }
 ]

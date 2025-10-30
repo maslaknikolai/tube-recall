@@ -1,12 +1,12 @@
 import { StarredFilter } from "../store/filter";
-import { Caption, Lang, VideoTranscript } from "@/types/VideoTranscript";
+import { Caption, Lang, Transcript } from "@/types/Transcript";
 
-export function filterStarred(transcripts: VideoTranscript[], starredFilter: StarredFilter) {
+export function filterStarred(transcripts: Transcript[], starredFilter: StarredFilter) {
   if (starredFilter === 'all') {
     return transcripts;
   }
 
-  return transcripts.reduce<VideoTranscript[]>((transcriptsAcc, transcript) => {
+  return transcripts.reduce<Transcript[]>((transcriptsAcc, transcript) => {
     const matchedLanguages = Object.entries(transcript.captions)
       .reduce<Record<Lang, Caption[]>>((captionsAcc, [langCode, captions]) => {
         const matchedCaptions = captions.reduce<Caption[]>((captionAcc, caption, index) => {

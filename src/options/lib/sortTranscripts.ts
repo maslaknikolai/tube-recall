@@ -1,7 +1,7 @@
 import { SortState } from "../store/sort";
-import { VideoTranscript } from "@/types/VideoTranscript";
+import { Transcript } from "@/types/Transcript";
 
-export function sortTranscripts(transcripts: VideoTranscript[], sortState: SortState) {
+export function sortTranscripts(transcripts: Transcript[], sortState: SortState) {
   const sorted = [...transcripts];
 
   if (sortState.type === 'date') {

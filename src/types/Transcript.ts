@@ -3,13 +3,14 @@ export type Lang = string
 
 export type StarredCaptions = Record<string, boolean | undefined>
 
-export interface VideoTranscript {
+export interface Transcript {
   videoId: string;
   title: string;
   captions: Record<Lang, Caption[]>;
   videoDuration: number;
   watchedAt: number;
   starredCaptions: StarredCaptions
+  progress: number
 }
 
 export interface Caption {
