@@ -44,7 +44,6 @@ export function listenForSubtitles() {
         }
 
         try {
-            let i = -1
             const newCaptions = parsedBody.events.reduce<Caption[]>((acc, e, i) => {
                 if (!e.segs) {
                     return acc;

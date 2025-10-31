@@ -17,28 +17,31 @@ browser.action.onClicked.addListener(() => {
 });
 
 browser.runtime.onMessage.addListener(async (message: any, _sender, sendResponse) => {
-  if (message?.type !== 'video_progress') {
-    return undefined;
-  }
+  if (message?.type === 'video_progress') {
+    const progressPayload = message.data as ProgressPayload
 
-  const progressPayload = message.data as ProgressPayload
+    const transcripts = transcriptsStore.get()
+    const transcript = transcripts[progressPayload.videoId]
 
-  const transcripts = transcriptsStore.get()
-  const transcript = transcripts[progressPayload.videoId]
-
-  if (
-    !transcript
-    || transcript.progress === progressPayload.progress
-  ) {
-    return
-  }
-
-  transcriptsStore.set({
-    ...transcripts,
-    [progressPayload.videoId]: {
-      ...transcript,
-      progress: progressPayload.progress,
-      watchedAt: Date.now(),
+    if (
+      !transcript
+      || transcript.progress === progressPayload.progress
+    ) {
+      return
     }
-  })
+
+    transcriptsStore.set({
+      ...transcripts,
+      [progressPayload.videoId]: {
+        ...transcript,
+        progress: progressPayload.progress,
+        watchedAt: Date.now(),
+      }
+    })
+  }
+
+
+  if (message?.type === 'open_options') {
+    browser.runtime.openOptionsPage();
+  }
 });
