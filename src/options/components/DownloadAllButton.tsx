@@ -1,12 +1,11 @@
 import { Button } from '@/options/components/ui/button';
-import { Transcript } from '@/types/Transcript';
 import { Download } from 'lucide-react';
+import { useProcessedTranscripts } from '../AppProvider';
 
-interface DownloadAllButtonProps {
-  transcripts: Transcript[];
-}
 
-export const DownloadAllButton = ({ transcripts }: DownloadAllButtonProps) => {
+export const DownloadAllButton = () => {
+  const transcripts = useProcessedTranscripts()
+
   const handleDownloadAll = () => {
     const dataStr = JSON.stringify(transcripts, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });

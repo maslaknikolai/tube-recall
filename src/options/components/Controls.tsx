@@ -3,12 +3,9 @@ import { SortControls } from './SortControls';
 import { StarredFilter } from './StarredFilter';
 import { ToggleOpenAllButton } from './ToggleOpenAllButton';
 import { SearchField } from './SearchField';
-import { useProcessedTranscripts } from '../AppProvider';
 
 
 export const Controls = () => {
-  const transcripts = useProcessedTranscripts()
-
   return (
     <div className="mb-6 flex gap-2 flex-wrap justify-between">
       <div className='flex flex-col gap-2'>
@@ -22,7 +19,7 @@ export const Controls = () => {
       </div>
 
       <div className="flex gap-2">
-        <DownloadAllButton transcripts={transcripts} />
+        <DownloadAllButton />
         <ToggleOpenAllButton />
       </div>
     </div>
