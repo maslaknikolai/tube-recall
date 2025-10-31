@@ -45,16 +45,18 @@ export const VideoCard = ({ transcript }: VideoCardProps) => {
           </CardTitle>
 
           <CardDescription className="flex items-center gap-2 flex-wrap">
-            <Clock className="h-3 w-3" />
-            <span>Duration: {formatTime(transcript.videoDuration)}</span>
+            <span className='text-sm'>
+              {formatDate(transcript.watchedAt)}
+            </span>
+
             <span>•</span>
-            <span>Last watch: {formatDate(transcript.watchedAt)}</span>
-            <span>•</span>
+
             <a
               href={youtubeLink(transcript.videoId, transcript.progress)}
               target="_blank"
+              className='text-sm flex gap-1 items-center border-b'
             >
-              Progress: {formatTime(transcript.progress)}
+              {formatTime(transcript.progress)} / {formatTime(transcript.videoDuration)}
             </a>
           </CardDescription>
         </CardHeader>
