@@ -1,11 +1,11 @@
-import * as React from "react"
-
 import { cn } from "@/options/lib/utils"
+import { forwardRef } from "react"
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+const Card = forwardRef<HTMLDivElement, React.ComponentProps<"div">>(({ className, ...props }, ref) => {
   return (
     <div
       data-slot="card"
+      ref={ref}
       className={cn(
         "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
         className
@@ -13,7 +13,7 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
       {...props}
     />
   )
-}
+})
 
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (

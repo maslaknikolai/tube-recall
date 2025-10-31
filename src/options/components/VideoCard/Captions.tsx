@@ -14,7 +14,7 @@ export const Captions = () => {
         <LanguageFilter />
       </div>
 
-      <div className="h-[calc(100vh-200px)] overflow-y-auto p-3 rounded-md bg-muted/30">
+      <div className="h-[calc(100vh-195px)] overflow-y-auto p-3 rounded-md bg-muted/30">
         <p className="text-sm leading-relaxed pr-10">
           {selectedLangCaptions?.map(caption => (
             <Caption

@@ -10,6 +10,7 @@ import { useAtom } from 'jotai';
 import { openedVideoIdsAtom } from '@/options/store/opened-videos';
 import { VideoCardProvider } from './VideoCardContext';
 import { youtubeLink } from '@/options/lib/youtubeLink';
+import { useRef } from 'react';
 
 interface VideoCardProps {
   transcript: Transcript;
@@ -19,9 +20,14 @@ export const VideoCard = ({ transcript }: VideoCardProps) => {
   const [openedVideoIds] = useAtom(openedVideoIdsAtom);
   const isOpen = openedVideoIds.has(transcript.videoId);
 
+  const videoCardRef = useRef<HTMLDivElement>(null);
+
   return (
-    <VideoCardProvider transcript={transcript}>
-      <Card>
+    <VideoCardProvider
+      transcript={transcript}
+      videoCardRef={videoCardRef}
+    >
+      <Card ref={videoCardRef}>
         <CardHeader className='flex flex-col gap-2'>
           <CardTitle className="flex gap-2 overflow-hidden w-full items-center">
             <ToggleOpenButton />
@@ -32,7 +38,7 @@ export const VideoCard = ({ transcript }: VideoCardProps) => {
 
             <div className="flex gap-2 shrink-0">
               <a
-                href={youtubeLink(transcript.videoId, transcript.progress)}
+                href={youtubeLink(transcript.videoId)}
                 target="_blank"
               >
                 <Button variant="default">
