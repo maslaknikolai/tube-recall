@@ -12,7 +12,7 @@ export const Main = () => {
       <div className="mb-8">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-bold mb-2">
+            <h1 className="text-3xl font-bold">
               TubeRecall
             </h1>
             <AboutModal />
@@ -20,10 +20,6 @@ export const Main = () => {
 
           <BuyMeACoffeLink />
         </div>
-
-        <p className="text-muted-foreground">
-          {transcripts.length} video transcript(s) available
-        </p>
       </div>
 
       <Controls />

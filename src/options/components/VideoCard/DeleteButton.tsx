@@ -35,7 +35,7 @@ export const DeleteButton = () => {
 
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem
-          className="flex items-center gap-2 text-destructive focus:text-destructive cursor-pointer"
+          className="flex items-center gap-2 text-destructive focus:text-destructive"
           onSelect={(e) => {
             e.preventDefault();
             handleDelete();

@@ -3,9 +3,11 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useAtom } from 'jotai';
 import { openedVideoIdsAtom } from '@/options/store/opened-videos';
 import { useVideoCard } from './VideoCardContext';
+import invariant from 'tiny-invariant';
+import { CURRENT_CAPTION_DATA_ATTR } from './Captions';
 
 export const ToggleOpenButton = () => {
-  const { transcript, videoCardRef } = useVideoCard();
+  const { transcript, videoCardRef, captionsScrollableRef } = useVideoCard();
   const [openedVideoIds, setOpenedVideoIds] = useAtom(openedVideoIdsAtom);
 
   const isOpen = openedVideoIds.has(transcript.videoId);
@@ -13,19 +15,33 @@ export const ToggleOpenButton = () => {
   const handleToggle = (pressed: boolean) => {
     setOpenedVideoIds(prev => {
       const newSet = new Set(prev);
+
       if (pressed) {
         newSet.add(transcript.videoId);
 
-        setTimeout(() => { // To make captions fill height before scrolling
-          if (!videoCardRef.current) {
-            return
-          }
+        requestAnimationFrame(() => {
+          invariant(videoCardRef.current);
+          invariant(captionsScrollableRef.current);
 
           window.scrollTo({
             top: window.scrollY + videoCardRef.current.getBoundingClientRect().top - 8,
             behavior: 'smooth'
           });
-        }, 100)
+
+          const captionElement = captionsScrollableRef.current.querySelector(
+            `[${CURRENT_CAPTION_DATA_ATTR}="true"]`
+          ) as HTMLElement | null;
+
+          if (!captionElement) return;
+
+          const relativeY = captionElement.offsetTop - captionsScrollableRef.current.offsetTop;
+          const scrollY = relativeY - (captionsScrollableRef.current.clientHeight / 2) + (captionElement.clientHeight / 2);
+
+          captionsScrollableRef.current.scrollTo({
+            top: scrollY,
+            behavior: 'smooth'
+          });
+        })
       } else {
         newSet.delete(transcript.videoId);
       }
@@ -40,7 +56,7 @@ export const ToggleOpenButton = () => {
       aria-label="Toggle transcript"
       size="sm"
       variant="default"
-      className="shrink-0 h-8 w-8 p-0 cursor-pointer"
+      className="shrink-0 h-8 w-8 p-0"
     >
       {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
     </Toggle>

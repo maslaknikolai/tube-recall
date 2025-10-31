@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode, useState, RefObject } from 'react';
+import { createContext, useContext, ReactNode, useState, RefObject, useRef } from 'react';
 import type { Transcript, Lang } from '@/types/Transcript';
 
 interface VideoCardContextValue {
@@ -6,6 +6,7 @@ interface VideoCardContextValue {
   selectedLanguage: Lang;
   setSelectedLanguage: (lang: Lang) => void;
   videoCardRef: RefObject<HTMLDivElement>;
+  captionsScrollableRef: RefObject<HTMLDivElement>;
 }
 
 const VideoCardContext = createContext<VideoCardContextValue | undefined>(undefined);
@@ -21,14 +22,15 @@ export function useVideoCard() {
 interface VideoCardProviderProps {
   children: ReactNode;
   transcript: Transcript;
-  videoCardRef: RefObject<HTMLDivElement>;
 }
 
-export function VideoCardProvider({ children, transcript, videoCardRef }: VideoCardProviderProps) {
+export function VideoCardProvider({ children, transcript }: VideoCardProviderProps) {
   const [selectedLanguage, setSelectedLanguage] = useState<Lang>(Object.keys(transcript.captions)[0]);
+  const captionsScrollableRef = useRef<HTMLDivElement>(null);
+  const videoCardRef = useRef<HTMLDivElement>(null);
 
   return (
-    <VideoCardContext.Provider value={{ transcript, selectedLanguage, setSelectedLanguage, videoCardRef }}>
+    <VideoCardContext.Provider value={{ transcript, selectedLanguage, setSelectedLanguage, videoCardRef, captionsScrollableRef }}>
       {children}
     </VideoCardContext.Provider>
   );
