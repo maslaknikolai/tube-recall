@@ -2,11 +2,12 @@ import { CopyButton } from '../CopyButton';
 import { LanguageFilter } from './LanguageFilter';
 import { useVideoCard } from './VideoCardContext';
 import { cn } from '@/options/lib/utils';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ClickedCaptionData, ClickedCaptionDropdown, defaultClickedCaptionData } from './ClickedCaptionDropdown';
 import { useAtom } from 'jotai';
 import { openedVideoIdsAtom } from '@/options/store/opened-videos';
 import { CardContent } from '../ui/card';
+import { Caption } from '@/types/Transcript';
 
 export const CURRENT_CAPTION_DATA_ATTR = 'data-is-current-caption';
 
@@ -21,6 +22,20 @@ export const Captions = () => {
   const selectedLangCaptions = transcript.captions[selectedLanguage];
 
   const [clickedCaptionData, setClickedCaption] = useState<ClickedCaptionData>(defaultClickedCaptionData)
+
+  const lastActiveCaption = useMemo(() => {
+    if (!selectedLangCaptions) {
+      return null;
+    }
+
+    return selectedLangCaptions.reduce<Caption | null>((acc, caption) => {
+      if (progressMs >= caption.start && progressMs <= caption.end) {
+        return caption;
+      }
+
+      return acc;
+    }, null);
+  }, [progressMs, selectedLangCaptions]);
 
   if (!isOpen) {
     return null
@@ -41,13 +56,12 @@ export const Captions = () => {
           <p className="text-sm leading-relaxed pr-10">
             {selectedLangCaptions?.map(caption => {
               const isStarred = transcript.starredCaptions[caption.id]
-              const isProgressHere = progressMs > caption.start && progressMs <= caption.end
 
               return (
                 <span
                   key={caption.id}
                   {...{
-                    [CURRENT_CAPTION_DATA_ATTR]: isProgressHere ? 'true' : undefined,
+                    [CURRENT_CAPTION_DATA_ATTR]: lastActiveCaption?.id === caption.id ? 'true' : undefined,
                   }}
                   onClick={(e) => {
                     setClickedCaption({
@@ -62,7 +76,7 @@ export const Captions = () => {
                     "hover:bg-primary/20 hover:text-primary transition-colors rounded px-0.5",
                     {
                       'bg-yellow-100': isStarred,
-                      'bg-primary text-secondary': isProgressHere || clickedCaptionData.caption?.id === caption.id,
+                      'bg-primary text-secondary': lastActiveCaption?.id === caption.id || clickedCaptionData.caption?.id === caption.id,
                     }
                   )}
                 >
